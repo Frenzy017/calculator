@@ -1,3 +1,6 @@
+
+
+
 const numberButtons = document.querySelectorAll("[data-number]");
 const operationButtons = document.querySelectorAll("[data-operand]");
 const equalsButton = document.querySelector("[data-equals]");
@@ -5,54 +8,58 @@ const deleteButton = document.querySelector("[data-delete]");
 const allClearButton = document.querySelector("[data-reset]");
 const textElement = document.querySelector("[data-text]");
 
-let result;
-let secondResult;
+let inputValue; // textShown
+let firstNum;
+let secondNum;
+let operator = "";
+let accumulation = 0;
 
-function calculator() {
-  numberButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      let value = (textElement.value = button.innerText);
+clear();
+deleted();
 
-      if (result === undefined) {
-        result = value;
-      } else {
-        result += value;
-      }
-      textElement.value = result;
-    });
-  });
-  clear();
-  deleted();
-  compute();
+function operate(operator, firstNum, secondNum) {
+  if (operator === "+") {
+    accumulation = Number(firstNum + secondNum);
+  } else if (operator === "-") {
+    accumulation = Number(firstNum - secondNum);
+  } else if (operator === "÷") {
+    accumulation = Number(firstNum / secondNum);
+  } else if (operator === "&times") {
+    accumulation = Number(firstNum * secondNum);
+  }
 }
-calculator();
 
 function clear() {
   allClearButton.addEventListener("click", () => {
     textElement.value = "";
-    result = "";
+    inputValue = "";
   });
 }
 
 function deleted() {
   deleteButton.addEventListener("click", () => {
     let deletedValue = (textElement.value = textElement.value.slice(0, -1));
-    result = deletedValue;
+    inputValue = deletedValue;
   });
 }
 
-function compute(operand) {
-  
+numberButtons.forEach((button) => {
+  button.addEventListener("click", (e) => {
+    let btnValue = (textElement.value = button.innerText);
 
-  operationButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      let value = (textElement.value = button.innerText);
-
-      result += value;
-      operand = value;
-
-      secondResult += value
-      console.log(secondResult);
-    });
+    if (inputValue === undefined) {
+      inputValue = btnValue;
+    } else {
+      inputValue += btnValue;
+    }
+    textElement.value = inputValue;
   });
-}
+});
+
+operationButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+
+    if()
+    
+  });
+});
