@@ -1,65 +1,111 @@
+// Declaring variables
 
-
-
-const numberButtons = document.querySelectorAll("[data-number]");
-const operationButtons = document.querySelectorAll("[data-operand]");
-const equalsButton = document.querySelector("[data-equals]");
-const deleteButton = document.querySelector("[data-delete]");
-const allClearButton = document.querySelector("[data-reset]");
-const textElement = document.querySelector("[data-text]");
-
-let inputValue; // textShown
-let firstNum;
-let secondNum;
+const screen = document.querySelector(".screen");
+let buffer = "";
 let operator = "";
-let accumulation = 0;
+let operatorCounter = Number(0);
+let previousNumber;
 
-clear();
-deleted();
+// Adding eventListener to every button
 
-function operate(operator, firstNum, secondNum) {
-  if (operator === "+") {
-    accumulation = Number(firstNum + secondNum);
-  } else if (operator === "-") {
-    accumulation = Number(firstNum - secondNum);
-  } else if (operator === "÷") {
-    accumulation = Number(firstNum / secondNum);
-  } else if (operator === "&times") {
-    accumulation = Number(firstNum * secondNum);
+function buttonHandler() {
+  let buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.addEventListener("click", function (e) {
+      handleInput(e.target.innerText);
+    });
+  });
+}
+
+buttonHandler();
+
+// Input value number or not
+
+function handleInput(value) {
+  if (isNaN(value)) {
+    handleSymbol(value);
+  } else {
+    handleNumber(value);
   }
 }
 
-function clear() {
-  allClearButton.addEventListener("click", () => {
-    textElement.value = "";
-    inputValue = "";
-  });
+// If input received a number
+
+function handleNumber(value) {
+  if (buffer === 0) {
+    buffer = value;
+  } else {
+    buffer = buffer + value.toString();
+  }
+  rerender();
 }
 
-function deleted() {
-  deleteButton.addEventListener("click", () => {
-    let deletedValue = (textElement.value = textElement.value.slice(0, -1));
-    inputValue = deletedValue;
-  });
+// Updating display
+
+function rerender() {
+  screen.innerText = buffer;
 }
 
-numberButtons.forEach((button) => {
-  button.addEventListener("click", (e) => {
-    let btnValue = (textElement.value = button.innerText);
+// If input value received any symbol
 
-    if (inputValue === undefined) {
-      inputValue = btnValue;
-    } else {
-      inputValue += btnValue;
+function handleSymbol(value) {
+  switch (value) {
+    case "÷":
+    case "*":
+    case "-":
+    case "+":
+      // Operate instantly if counter bigger than 1
+
+      if (operatorCounter >= 1) {
+        calculate();
+      }
+
+      operator = value;
+      previousNumber = buffer;
+      buffer = "";
+      screen.innerText = previousNumber;
+      operatorCounter += 1;
+      break;
+    case "CE":
+      buffer = 0;
+      previousNumber = 0;
+      rerender();
+      break;
+    case "DEL":
+      if (screen.innerText.length < 2) {
+        buffer = 0;
+      } else {
+        buffer = buffer.slice(0, -1);
+      }
+      rerender();
+      break;
+    case "=":
+      calculate();
+  }
+}
+
+// Calculate values, updating input Value, resetting operator
+
+function calculate() {
+  if (operator === null) {
+    return;
+  } else {
+    switch (operator) {
+      case "+":
+        screen.innerText = parseInt(previousNumber) + parseInt(buffer);
+        break;
+      case "-":
+        screen.innerText = parseInt(previousNumber) - parseInt(buffer);
+        break;
+      case "*":
+        screen.innerText = parseInt(previousNumber) * parseInt(buffer);
+        break;
+      case "÷":
+        screen.innerText = parseInt(previousNumber) / parseInt(buffer);
+        break;
     }
-    textElement.value = inputValue;
-  });
-});
 
-operationButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-
-    if()
-    
-  });
-});
+    buffer = screen.innerText;
+    operator = null;
+  }
+}
